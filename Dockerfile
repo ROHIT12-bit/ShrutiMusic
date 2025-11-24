@@ -1,22 +1,20 @@
-FROM python:3.11-slim
+FROM python:3.11
 
-# Install system dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    ffmpeg \
-    bash \
-    git \
-    && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Create app directory
+# Set working directory
 WORKDIR /app
 
-# Copy bot files
+# Install NodeJS 18 (required for PyTgCalls)
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs && \
+    node -v
+
+# Copy project files
 COPY . /app
 
-# Install Python dependencies
+# Install python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Run bot
+# Start the bot
 CMD ["bash", "start"]
